@@ -1,0 +1,95 @@
+# ========== .NET PROJECT SETUP (Generic - Latest Version) ==========
+
+>>> dotnet new globaljson --roll-forward latestFeature
+>>> dotnet new sln
+>>> dotnet new webapi -o API -controllers
+>>> dotnet new classlib -o Infrastructure
+>>> dotnet sln add API
+>>> dotnet sln add Infrastructure
+>>> dotnet sln list
+
+# ========== SETUP API PROJECT ==========
+
+>>> cd .\API\
+>>> dotnet add reference ..\Infrastructure
+>>> dotnet restore
+>>> dotnet build
+
+# ========== INSTALL DATABASE PACKAGES ==========
+
+>>> cd ..\Infrastructure\
+>>> dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+
+>>> cd ..\API\
+>>> dotnet add package Microsoft.EntityFrameworkCore.Design
+>>> cd ..
+
+# ========== DATABASE SETUP (SQL SERVER WITH DOCKER) ==========
+
+>>> New-Item docker-compose.yml -Force
+
+# Add this content to docker-compose.yml:
+# 
+# services:
+#   sqlserver:
+#     image: mcr.microsoft.com/mssql/server:2022-latest
+#     environment:
+#       ACCEPT_EULA: 'Y'
+#       SA_PASSWORD: 'YourPassword123!'
+#     ports:
+#       - "1433:1433"
+
+>>> docker compose up -d
+
+# ========== ENTITY FRAMEWORK MIGRATIONS ==========
+
+>>> dotnet ef
+>>> dotnet ef migrations add InitialCreate -s API -p Infrastructure
+>>> dotnet ef database update -s API -p Infrastructure
+
+# ========== ENABLE CORS IN API ==========
+
+# Edit Program.cs in API project and add CORS configuration:
+# builder.Services.AddCors(options =>
+# {
+#     options.AddPolicy("AllowAngular", policy =>
+#     {
+#         policy.WithOrigins("http://localhost:4200")
+#               .AllowAnyMethod()
+#               .AllowAnyHeader();
+#     });
+# });
+# app.UseCors("AllowAngular");
+
+# ========== RUN API ==========
+
+>>> cd .\API\
+>>> dotnet run
+>>> dotnet watch
+>>> cd ..
+
+# ========== ANGULAR 21 CLIENT SETUP ==========
+
+>>> ng new client
+>>> cd .\client\
+
+# ========== GENERATE COMPONENTS & SERVICES ==========
+
+>>> ng serve
+>>> ng generate service services/api
+>>> ng g c layout/header
+>>> ng g c pages/home
+>>> ng g m shared/shared.module
+
+# ========== ADDITIONAL ANGULAR COMMANDS ==========
+
+>>> ng help
+>>> ng generate help
+>>> ng build --configuration production
+
+# ========== USEFUL REFERENCES ==========
+
+# .NET Docs: https://learn.microsoft.com/en-us/dotnet/
+# Entity Framework Core: https://learn.microsoft.com/en-us/ef/core/
+# Angular Docs: https://angular.dev
+
