@@ -41,6 +41,26 @@
 
 >>> docker compose up -d
 
+# Add connection string in appsettings.Development.json :
+#{
+#  "Logging": {
+#    "LogLevel": {
+#      "Default": "Information",
+#      "Microsoft.AspNetCore": "Warning"
+#    }
+#  },
+#  "ConnectionStrings": {
+#    "DefaultConnection": "Server=localhost,1433;Database=payment;
+#        User Id=SA;Password=YourPassword123!;TrustServerCertificate=True;"
+#  }
+#}
+
+# Add in Program.cs db context:
+# builder.Services.AddDbContext<PersonContext>(options => 
+# {
+#     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+# });
+
 # ========== ENTITY FRAMEWORK MIGRATIONS ==========
 
 >>> dotnet ef
